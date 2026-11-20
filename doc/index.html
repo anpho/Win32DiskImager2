@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Win32 Disk Imager — native Win32 image writer</title>
+<meta name="description" content="A native Win32 rewrite of Win32DiskImager: read, write and verify SD cards and USB drives with stock Windows controls, no Qt runtime, one 378 KB executable.">
+<meta name="theme-color" content="#f6f7f9">
+<link rel="icon" href="app-icon.png" type="image/png">
+<style>
+  :root{
+    --bg:#f6f7f9;
+    --ink:#0e1726;
+    --muted:#5b6577;
+    --line:#e2e6ee;
+    --card:#ffffff;
+    --accent:#1e5eff;
+    --accent-dark:#0b3fce;
+    --soft:#eef2ff;
+    --code:#0b1220;
+    --radius:18px;
+    --shadow:0 24px 60px -28px rgba(14,23,38,.35);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:
+      radial-gradient(1100px 560px at 82% -8%, #e7edff 0%, rgba(231,237,255,0) 62%),
+      var(--bg);
+    color:var(--ink);
+    font:16px/1.62 "Segoe UI", "Microsoft YaHei UI", "Microsoft YaHei", system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  a:focus-visible,.btn:focus-visible{outline:3px solid rgba(30,94,255,.35);outline-offset:3px;border-radius:12px}
+  #features,#native,#build,#languages{scroll-margin-top:84px}
+  img{max-width:100%}
+  .wrap{width:min(1120px, calc(100% - 48px));margin:0 auto}
+
+  /* nav */
+  .nav{
+    position:sticky;top:0;z-index:20;
+    background:rgba(246,247,249,.82);
+    backdrop-filter:blur(14px);
+    border-bottom:1px solid rgba(226,230,238,.9);
+  }
+  .nav .wrap{display:flex;align-items:center;gap:28px;height:68px}
+  .brand{display:flex;align-items:center;gap:10px;color:var(--ink);font-weight:650;letter-spacing:-.01em}
+  .brand:hover{text-decoration:none}
+  .brand img{width:28px;height:28px;image-rendering:auto}
+  .links{display:flex;gap:24px;margin-left:auto;align-items:center}
+  .links a{color:var(--muted);font-size:.94rem;font-weight:550}
+  .links a:hover{color:var(--ink);text-decoration:none}
+  .links .github{border:1px solid var(--line);background:#fff;padding:8px 13px;border-radius:10px;color:var(--ink)}
+
+  /* hero */
+  .hero{display:grid;grid-template-columns:1.02fr .98fr;gap:64px;align-items:center;padding:76px 0 54px}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:9px;
+    font-size:.76rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);
+    margin:0 0 18px;
+  }
+  .eyebrow::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px var(--soft)}
+  h1{font-size:clamp(2.45rem, 4.9vw, 3.9rem);line-height:1.03;letter-spacing:-.045em;margin:0 0 22px;font-weight:720}
+  h1 .thin{color:#7f8aa3;font-weight:620}
+  .lede{font-size:1.14rem;line-height:1.65;color:var(--muted);max-width:35rem;margin:0 0 30px}
+  .actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+  .btn{
+    display:inline-flex;align-items:center;gap:10px;
+    padding:13px 19px;border-radius:12px;border:1px solid var(--line);background:#fff;
+    color:var(--ink);font-weight:650;font-size:.98rem;box-shadow:0 1px 0 rgba(14,23,38,.04);
+    transition:transform .15s ease, box-shadow .15s ease, background .15s ease;
+  }
+  .btn:hover{text-decoration:none;transform:translateY(-1px);box-shadow:0 10px 24px -16px rgba(14,23,38,.4)}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 14px 26px -14px rgba(30,94,255,.7)}
+  .btn.primary:hover{background:var(--accent-dark);border-color:var(--accent-dark)}
+  .btn .tag{font-size:.72rem;font-weight:700;letter-spacing:.02em;padding:3px 7px;border-radius:999px;background:rgba(255,255,255,.2)}
+  .meta{display:flex;flex-wrap:wrap;gap:8px 20px;list-style:none;padding:0;margin:26px 0 0;color:#788298;font-size:.86rem}
+  .meta li{display:flex;align-items:center;gap:7px}
+  .meta li::before{content:"";width:5px;height:5px;border-radius:50%;background:#a9b3c6}
+
+  .shot{
+    margin:0;padding:10px;background:#fff;border:1px solid var(--line);border-radius:16px;
+    box-shadow:var(--shadow);transform:rotate(.35deg);
+  }
+  .shot img{display:block;width:100%;height:auto;border-radius:8px;border:1px solid #d9dee8}
+  .shot figcaption{font-size:.8rem;color:#7b8598;padding:10px 4px 2px;text-align:center}
+
+  /* stats */
+  .stats{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:rgba(255,255,255,.55)}
+  .stats .wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;padding:26px 0}
+  .stat b{display:block;font-size:1.5rem;letter-spacing:-.03em;line-height:1.1}
+  .stat span{font-size:.82rem;color:var(--muted)}
+
+  /* sections */
+  section{padding:84px 0}
+  .section-head{max-width:720px;margin-bottom:38px}
+  h2{font-size:clamp(1.9rem,3.2vw,2.6rem);line-height:1.1;letter-spacing:-.035em;margin:0 0 14px;font-weight:700}
+  .section-head p{margin:0;color:var(--muted);font-size:1.02rem}
+
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .card{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px;transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+  }
+  .card:hover{transform:translateY(-2px);box-shadow:0 18px 40px -30px rgba(14,23,38,.5);border-color:#d3dae8}
+  .icon{
+    width:36px;height:36px;border-radius:10px;background:var(--soft);color:var(--accent);
+    display:grid;place-items:center;margin-bottom:16px;
+  }
+  .icon svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  .card h3{margin:0 0 7px;font-size:1.03rem;letter-spacing:-.01em}
+  .card p{margin:0;color:var(--muted);font-size:.92rem;line-height:1.58}
+
+  /* native */
+  .native{display:grid;grid-template-columns:.95fr 1.05fr;gap:56px;align-items:center}
+  .checks{list-style:none;padding:0;margin:26px 0 0;display:grid;gap:12px}
+  .checks li{position:relative;padding-left:29px;color:#3c4659;font-size:.96rem}
+  .checks li::before{
+    content:"";position:absolute;left:0;top:3px;width:18px;height:18px;border-radius:50%;
+    background:var(--soft) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%231e5eff' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E") center/11px no-repeat;
+  }
+  .code{
+    background:var(--code);border-radius:16px;padding:22px 22px 18px;color:#c6d3ea;
+    font:13px/1.75 "Cascadia Code", Consolas, "Courier New", monospace;
+    box-shadow:0 26px 60px -34px rgba(3,8,20,.9);overflow:auto;border:1px solid #1b2740;
+  }
+  .code .bar{display:flex;gap:6px;margin-bottom:16px}
+  .code .bar i{width:9px;height:9px;border-radius:50%;background:#2a3854}
+  .code .bar i:first-child{background:#ff5f57}.code .bar i:nth-child(2){background:#febc2e}.code .bar i:nth-child(3){background:#28c840}
+  .code .kw{color:#7aa2ff}.code .str{color:#7ee0a3}.code .dim{color:#5d6f8f}
+  .code-caption{margin:12px 2px 0;font-size:.8rem;color:#7b8598}
+
+  /* build */
+  .build{background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .build .native{align-items:start}
+  .steps{list-style:none;counter-reset:step;padding:0;margin:26px 0 0;display:grid;gap:18px}
+  .steps li{position:relative;padding-left:38px;color:#465166;font-size:.95rem}
+  .steps li::before{
+    counter-increment:step;content:counter(step);
+    position:absolute;left:0;top:0;width:24px;height:24px;border-radius:50%;
+    background:var(--accent);color:#fff;font-size:.72rem;font-weight:700;display:grid;place-items:center;
+  }
+  .steps b{color:var(--ink)}
+
+  /* languages */
+  .langs{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .lang{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px}
+  .lang header{display:flex;justify-content:space-between;align-items:center;color:#7b8598;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;margin-bottom:14px}
+  .lang p{margin:6px 0;font-size:1.02rem}
+  .lang .dim{color:#8a94a8;font-size:.85rem}
+
+  /* callout */
+  .callout{
+    margin-top:34px;display:flex;gap:14px;align-items:flex-start;
+    border:1px solid #f2d7a8;background:#fff9ef;border-radius:14px;padding:16px 18px;color:#6b4d16;font-size:.92rem;
+  }
+  .callout strong{color:#4d3508}
+  .callout svg{flex:0 0 20px;width:20px;height:20px;margin-top:2px;stroke:#b7791f;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+  /* footer */
+  footer{border-top:1px solid var(--line);padding:40px 0 54px;color:var(--muted);font-size:.88rem}
+  footer .wrap{display:flex;flex-wrap:wrap;gap:18px 32px;align-items:center;justify-content:space-between}
+  footer .left{display:flex;align-items:center;gap:10px}
+  footer img{width:22px;height:22px}
+  footer nav{display:flex;flex-wrap:wrap;gap:18px}
+  footer a{color:var(--muted)}
+  footer a:hover{color:var(--ink)}
+  .small{font-size:.78rem;color:#98a1b2;margin-top:6px}
+
+  @media (max-width:920px){
+    .hero{grid-template-columns:1fr;gap:40px;padding-top:52px}
+    .shot{max-width:640px}
+    .native{grid-template-columns:1fr;gap:34px}
+    .grid{grid-template-columns:1fr 1fr}
+  }
+  @media (max-width:460px){
+    .brand{font-size:.95rem;gap:8px}
+    .brand img{width:24px;height:24px}
+    .links .github{padding:7px 10px;font-size:.83rem}
+    .btn{padding:12px 15px;font-size:.92rem}
+  }
+  @media (max-width:720px){
+    .links a:not(.github){display:none}
+    .stats .wrap{grid-template-columns:1fr 1fr}
+    .grid,.langs{grid-template-columns:1fr}
+    section{padding:62px 0}
+    .wrap{width:min(1120px, calc(100% - 32px))}
+    h1{letter-spacing:-.035em}
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#top"><img src="app-icon.png" alt="" width="28" height="28">Win32 Disk Imager</a>
+    <nav class="links" aria-label="Main">
+      <a href="#features">Features</a>
+      <a href="#native">Native</a>
+      <a href="#build">Build</a>
+      <a href="#languages">Languages</a>
+      <a class="github" href="https://sourceforge.net/projects/win32diskimager/" target="_blank" rel="noopener">Original project ↗</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero wrap">
+    <div>
+      <p class="eyebrow">Native Win32 · no Qt runtime · one executable</p>
+      <h1>Raw disk images,<br><span class="thin">written in Win32.</span></h1>
+      <p class="lede">
+        A from-scratch native Win32 rewrite of Win32DiskImager. Read, write and verify SD cards
+        and USB drives with stock Windows controls — no Qt, no bundled runtime, no custom widgets.
+      </p>
+      <div class="actions">
+        <a class="btn primary" href="Win32DiskImager.exe" download>Download for Windows <span class="tag">378 KB</span></a>
+        <a class="btn" href="#build">Build from source</a>
+      </div>
+      <ul class="meta">
+        <li>Windows 10 / 11 · x64</li>
+        <li>Administrator required</li>
+        <li>GPL-2.0</li>
+      </ul>
+    </div>
+    <figure class="shot">
+      <img src="screenshot-en.png" width="600" height="414" alt="Win32 Disk Imager main window: Image File, Device, Hash, Progress and action buttons in a native Windows dialog.">
+      <figcaption>One native dialog. Stock group box, edit, combo box, progress bar and status bar.</figcaption>
+    </figure>
+  </section>
+
+  <div class="stats">
+    <div class="wrap">
+      <div class="stat"><b>378 KB</b><span>single executable</span></div>
+      <div class="stat"><b>0</b><span>Qt DLLs shipped</span></div>
+      <div class="stat"><b>2</b><span>UI languages built in</span></div>
+      <div class="stat"><b>1</b><span>DIALOGEX template</span></div>
+    </div>
+  </div>
+
+  <section id="features" class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Feature parity</p>
+      <h2>Everything the original does.<br>None of the framework.</h2>
+      <p>The same workflow and safeguards as Win32DiskImager 1.0.0, rebuilt on the Win32 API.</p>
+    </div>
+    <div class="grid">
+      <article class="card">
+        <div class="icon"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="7.5" ry="3"/><path d="M4.5 5v7c0 1.7 3.4 3 7.5 3s7.5-1.3 7.5-3V5"/><path d="M4.5 12v7c0 1.7 3.4 3 7.5 3s7.5-1.3 7.5-3v-7"/></svg></div>
+        <h3>Read · Write · Verify</h3>
+        <p>Block-by-block transfers in 1024-sector chunks, with a cancelable progress bar and the exact sector of the first mismatch.</p>
+      </article>
+      <article class="card">
+        <div class="icon"><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.1 0l2-2a5 5 0 0 0-7.1-7.1l-1.1 1.1"/><path d="M14 11a5 5 0 0 0-7.1 0l-2 2A5 5 0 0 0 12 20.1l1.1-1.1"/></svg></div>
+        <h3>MD5 · SHA1 · SHA256</h3>
+        <p>Hash the selected image with Windows CNG/BCrypt and copy the digest to the clipboard in one click.</p>
+      </article>
+      <article class="card">
+        <div class="icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M9 4v16"/></svg></div>
+        <h3>Allocated partitions only</h3>
+        <p>Read just the defined partitions: parse the MBR and stop at the end of the last partition instead of copying the whole device.</p>
+      </article>
+      <article class="card">
+        <div class="icon"><svg viewBox="0 0 24 24"><path d="M9 3v5M15 3v5"/><path d="M6 8h12v5a6 6 0 0 1-12 0z"/><path d="M12 19v3"/></svg></div>
+        <h3>Hot-plug aware</h3>
+        <p>Removable, USB, SD and MMC devices are enumerated at startup and refreshed through <code>WM_DEVICECHANGE</code>.</p>
+      </article>
+      <article class="card">
+        <div class="icon"><svg viewBox="0 0 24 24"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 20h16"/></svg></div>
+        <h3>Drop, type or pass a path</h3>
+        <p>Drag an image onto the window, browse for it, or pass it on the command line. The last folder is remembered in the registry.</p>
+      </article>
+      <article class="card">
+        <div class="icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9S14.5 18.4 12 21M12 3C9.5 5.6 8.2 8.7 8.2 12S9.5 18.4 12 21"/></svg></div>
+        <h3>English &amp; 简体中文</h3>
+        <p>Every caption and message is a resource string. The UI follows the Windows language or an explicit <code>--lang</code> override.</p>
+      </article>
+    </div>
+  </section>
+
+  <section id="native" class="wrap">
+    <div class="native">
+      <div>
+        <p class="eyebrow">Native by design</p>
+        <h2>A dialog, not a framework.</h2>
+        <p class="lede" style="margin-bottom:0">
+          The entire interface is a single <code>DIALOGEX</code> resource. Every control is a stock
+          Win32 class — nothing is owner-drawn, themed by hand, or wrapped in a UI toolkit.
+        </p>
+        <ul class="checks">
+          <li>No Qt runtime, no Qt DLLs, no plugin folders.</li>
+          <li>Scripted in <code>Win32DiskImager.rc</code>; captions applied at runtime for i18n.</li>
+          <li>Common Controls v6 manifest for native Windows 10/11 visuals.</li>
+          <li>Statically linked C/C++ runtime — copy one exe and run it.</li>
+        </ul>
+      </div>
+      <div>
+        <div class="code" aria-label="Excerpt from the dialog resource">
+          <div class="bar"><i></i><i></i><i></i></div>
+<span class="kw">GROUPBOX</span>  <span class="dim">"",</span> IDC_STATIC_FILE, <span class="str">7, 7, 175, 35</span><br>
+<span class="kw">EDITTEXT</span>  IDC_EDIT_FILE, <span class="str">12, 19, 140, 14</span><br>
+<span class="kw">COMBOBOX</span>  IDC_COMBO_DEVICE, <span class="str">191, 19, 97, 60</span><br>
+<span class="kw">PUSHBUTTON</span> IDC_BTN_READ, <span class="str">70, 154, 52, 16</span>
+        </div>
+        <p class="code-caption">An excerpt from <code>Win32DiskImager.rc</code>.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="build" class="build">
+    <div class="wrap native">
+      <div>
+        <p class="eyebrow">Build</p>
+        <h2>Two commands, one exe.</h2>
+        <p class="lede" style="margin-bottom:0">All you need is a MinGW-w64 toolchain with <code>g++</code> and <code>windres</code>. <code>build.bat</code> compiles the resources and links one executable.</p>
+        <ol class="steps">
+          <li><b>Get the source.</b> Clone this repository or download its archive.</li>
+          <li><b>Run <code>build.bat</code>.</b> It compiles the resources and links <code>Win32DiskImager.exe</code>.</li>
+          <li><b>Run as administrator.</b> Raw device access requires elevation; the manifest requests it.</li>
+        </ol>
+      </div>
+      <div>
+        <div class="code" aria-label="Build and run commands">
+          <div class="bar"><i></i><i></i><i></i></div>
+<span class="dim">rem from the repository root</span><br>
+<span class="kw">build.bat</span><br><br>
+<span class="dim">rem English UI</span><br>
+<span class="kw">Win32DiskImager.exe</span> --lang en<br><br>
+<span class="dim">rem Chinese UI</span><br>
+<span class="kw">Win32DiskImager.exe</span> --lang zh-CN
+        </div>
+        <div class="callout">
+          <svg viewBox="0 0 24 24"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>
+          <div><strong>Writing a physical device overwrites it.</strong> Double-check the target drive before you press Write.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="languages" class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Internationalization</p>
+      <h2>One dialog, every language.</h2>
+      <p>Strings live in <code>STRINGTABLE</code> blocks in the resource script. The dialog is shared; captions are loaded with <code>LoadStringW</code> after <code>SetThreadUILanguage</code>.</p>
+    </div>
+    <div class="langs">
+      <div class="lang">
+        <header><span>English</span><span>en-US</span></header>
+        <p>Waiting for a task.</p>
+        <p>Write Successful.</p>
+        <p class="dim">Default on non-Chinese Windows.</p>
+      </div>
+      <div class="lang">
+        <header><span>简体中文</span><span>zh-CN</span></header>
+        <p>等待任务。</p>
+        <p>写入成功。</p>
+        <p class="dim">Chinese Windows UI, or <code>--lang zh-CN</code>.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <div class="left"><img src="app-icon.png" alt="" width="22" height="22"><span>Win32 Disk Imager — a native Win32 rewrite.</span></div>
+      <div class="small">Based on Win32DiskImager 1.0.0 by Justin Davis and the ImageWriter developers. GPL-2.0.</div>
+    </div>
+    <nav aria-label="Footer">
+      <a href="https://sourceforge.net/projects/win32diskimager/" target="_blank" rel="noopener">Original project</a>
+      <a href="https://www.gnu.org/licenses/old-licenses/gpl-2.0.html" target="_blank" rel="noopener">License</a>
+      <a href="#top">Back to top</a>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>

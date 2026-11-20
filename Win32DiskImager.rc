@@ -1,0 +1,229 @@
+#ifdef __MINGW32__
+#include <winuser.rh>
+#include <commctrl.rh>
+#include <winnt.rh>
+#else
+#include <winresrc.h>
+#endif
+#include "resource.h"
+
+#pragma code_page(65001)
+
+IDD_MAIN DIALOGEX 0, 0, 300, 188
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX
+FONT 8, "MS Shell Dlg", 400, 0, 1
+BEGIN
+    GROUPBOX        "", IDC_STATIC_FILE, 7, 7, 175, 35
+    EDITTEXT        IDC_EDIT_FILE, 12, 19, 140, 14, ES_AUTOHSCROLL
+    PUSHBUTTON      "...", IDC_BTN_BROWSE, 155, 19, 22, 14
+
+    GROUPBOX        "", IDC_STATIC_DEVICE, 186, 7, 107, 35
+    COMBOBOX        IDC_COMBO_DEVICE, 191, 19, 97, 60, CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+
+    GROUPBOX        "", IDC_STATIC_HASH, 7, 46, 286, 49
+    COMBOBOX        IDC_COMBO_HASH, 12, 58, 54, 60, CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "", IDC_BTN_HASHGEN, 70, 58, 50, 14
+    PUSHBUTTON      "", IDC_BTN_HASHCOPY, 124, 58, 44, 14
+    EDITTEXT        IDC_EDIT_HASH, 12, 76, 276, 14, ES_AUTOHSCROLL | ES_READONLY
+
+    CONTROL         "", IDC_CHK_PARTITIONS, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 10, 100, 160, 10
+
+    GROUPBOX        "", IDC_STATIC_PROGRESS, 7, 113, 286, 34
+    CONTROL         "", IDC_PROGRESS, "msctls_progress32", 0, 12, 126, 240, 14
+    LTEXT           "0%", IDC_STATIC_PERCENT, 258, 129, 30, 9, SS_RIGHT
+
+    PUSHBUTTON      "", IDC_BTN_CANCEL, 7, 154, 58, 16
+    PUSHBUTTON      "", IDC_BTN_READ, 70, 154, 52, 16
+    PUSHBUTTON      "", IDC_BTN_WRITE, 127, 154, 52, 16
+    PUSHBUTTON      "", IDC_BTN_VERIFY, 184, 154, 58, 16
+    PUSHBUTTON      "", IDC_BTN_EXIT, 247, 154, 46, 16
+END
+
+IDI_APP ICON "Win32DiskImager.ico"
+
+1 24 "Win32DiskImager.manifest"
+
+1 VERSIONINFO
+ FILEVERSION 1,0,0,0
+ PRODUCTVERSION 1,0,0,0
+ FILEFLAGSMASK 0x3fL
+ FILEFLAGS 0x0L
+ FILEOS 0x40004L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "Comments", "Image Writer for Windows to write USB and SD images"
+            VALUE "FileDescription", "Win32 Disk Imager"
+            VALUE "FileVersion", "1.0.0"
+            VALUE "InternalName", "Win32DiskImager"
+            VALUE "LegalCopyright", "Copyright (C) 2009-2017 Windows ImageWriter Team"
+            VALUE "OriginalFilename", "Win32DiskImager.exe"
+            VALUE "ProductName", "Win32 Image Writer"
+            VALUE "ProductVersion", "1.0.0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+STRINGTABLE
+BEGIN
+    IDS_TITLE               "Win32 Disk Imager"
+    IDS_GROUP_FILE          "Image File"
+    IDS_GROUP_DEVICE        "Device"
+    IDS_GROUP_HASH          "Hash"
+    IDS_GROUP_PROGRESS      "Progress"
+    IDS_CHK_PARTITIONS      "Read Only Allocated Partitions"
+    IDS_HASH_GENERATE       "Generate"
+    IDS_HASH_COPY           "Copy"
+    IDS_HASH_NONE           "None"
+    IDS_BTN_CANCEL          "Cancel"
+    IDS_BTN_READ            "Read"
+    IDS_BTN_WRITE           "Write"
+    IDS_BTN_VERIFY          "Verify Only"
+    IDS_BTN_EXIT            "Exit"
+    IDS_WAITING             "Waiting for a task."
+    IDS_DONE                "Done."
+    IDS_EXIT_TITLE          "Exit?"
+    IDS_EXIT_READ           "Exiting now will result in a corrupt image file.\nAre you sure you want to exit?"
+    IDS_EXIT_WRITE          "Exiting now will result in a corrupt disk.\nAre you sure you want to exit?"
+    IDS_EXIT_VERIFY         "Exiting now will cancel verifying image.\nAre you sure you want to exit?"
+    IDS_CANCEL_TITLE        "Cancel?"
+    IDS_CANCEL_CORRUPT      "Canceling now will result in a corrupt destination.\nAre you sure you want to cancel?"
+    IDS_CANCEL_VERIFY       "Cancel Verify.\nAre you sure you want to cancel?"
+    IDS_WRITE_ERROR         "Write Error"
+    IDS_IMAGE_ON_DEVICE     "Image file cannot be located on the target device."
+    IDS_CONFIRM_OVERWRITE   "Confirm overwrite"
+    IDS_WRITE_CONFIRM       "Writing to a physical device can corrupt the device.\n(Target Device: %s ""%s"")\nAre you sure you want to continue?"
+    IDS_FILE_ERROR          "File Error"
+    IDS_FILE_MISSING        "The selected file does not exist."
+    IDS_NO_PERMISSION       "You do not have permission to read the selected file."
+    IDS_EMPTY_FILE          "The specified file contains no data."
+    IDS_COMPLETE            "Complete"
+    IDS_WRITE_OK            "Write Successful."
+    IDS_READ_OK             "Read Successful."
+    IDS_READ_CANCELED       "Read Canceled."
+    IDS_VERIFY_OK           "Verify Successful."
+    IDS_FILE_INFO           "File Info"
+    IDS_SPECIFY_SAVE        "Please specify a file to save data to."
+    IDS_SPECIFY_IMAGE       "Please specify an image file to use."
+    IDS_VERIFY_ERROR        "Verify Error"
+    IDS_DISK_TOO_SMALL      "Disk is not large enough for the specified image."
+    IDS_READ_OVERWRITE      "Are you sure you want to overwrite the specified file?"
+    IDS_SELECT_IMAGE        "Select a disk image"
+    IDS_FILTER_LABEL        "Disk Images (*.img *.IMG)"
+    IDS_GENERATING          "Generating..."
+    IDS_NOT_ENOUGH          "Not enough available space!"
+    IDS_WRITE_SIZE_WARN     "More space required than is available:\n  Required: %llu sectors\n  Available: %llu sectors\n  Sector Size: %u\n\nThe extra space %s appear to contain data\n\nContinue Anyway?"
+    IDS_SIZE_MISMATCH       "Size Mismatch!"
+    IDS_VERIFY_SIZE_WARN    "Size of image larger than device:\n  Image: %llu sectors\n  Device: %llu sectors\n  Sector Size: %u\n\nThe extra space %s appear to contain data\n\nContinue Anyway?"
+    IDS_VERIFY_FAILURE      "Verify Failure"
+    IDS_VERIFY_FAILED_AT    "Verification failed at sector: %llu"
+    IDS_HASH_ERROR          "Hash Error"
+    IDS_HASH_FAILED         "Unable to compute the hash (status 0x%08X)."
+    IDS_HASH_OPEN_FAILED    "An error occurred when attempting to open the image file."
+    IDS_DOES                "DOES"
+    IDS_DOES_NOT            "does not"
+    IDS_DEVICE_ERROR        "Device Error"
+    IDS_VOLUME_ERROR        "Volume Error"
+    IDS_LOCK_ERROR          "Lock Error"
+    IDS_DISMOUNT_ERROR      "Dismount Error"
+    IDS_READ_ERROR          "Read Error"
+    IDS_ERR_FILE_HANDLE     "An error occurred when attempting to get a handle on the file.\nError %u: %s"
+    IDS_ERR_DEVICE_HANDLE   "An error occurred when attempting to get a handle on the device.\nError %u: %s"
+    IDS_ERR_VOLUME_HANDLE   "An error occurred when attempting to get a handle on the volume.\nError %u: %s"
+    IDS_ERR_VOLUME_INFO     "An error occurred when attempting to get information on the volume.\nError %u: %s"
+    IDS_ERR_LOCK            "An error occurred when attempting to lock the volume.\nError %u: %s"
+    IDS_ERR_DISMOUNT        "An error occurred when attempting to dismount the volume.\nError %u: %s"
+    IDS_ERR_READ            "An error occurred when attempting to read data from the handle.\nError %u: %s"
+    IDS_ERR_WRITE           "An error occurred when attempting to write data to the handle.\nError %u: %s"
+    IDS_ERR_GEOMETRY        "An error occurred when attempting to get the device's geometry.\nError %u: %s"
+    IDS_ERR_FSIZE           "An error occurred while getting the file size.\nError %u: %s"
+    IDS_FREE_SPACE_ERROR    "Free Space Error"
+    IDS_ERR_FREE_SPACE      "Failed to get the free space on drive %s.\nError %u: %s\nChecking of free space will be skipped."
+END
+
+LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
+STRINGTABLE
+BEGIN
+    IDS_TITLE               "Win32 磁盘映像工具"
+    IDS_GROUP_FILE          "映像文件"
+    IDS_GROUP_DEVICE        "设备"
+    IDS_GROUP_HASH          "校验值"
+    IDS_GROUP_PROGRESS      "任务进度"
+    IDS_CHK_PARTITIONS      "仅读取已分配分区"
+    IDS_HASH_GENERATE       "生成"
+    IDS_HASH_COPY           "复制"
+    IDS_HASH_NONE           "无"
+    IDS_BTN_CANCEL          "取消"
+    IDS_BTN_READ            "读取"
+    IDS_BTN_WRITE           "写入"
+    IDS_BTN_VERIFY          "仅校验"
+    IDS_BTN_EXIT            "退出"
+    IDS_WAITING             "等待任务。"
+    IDS_DONE                "完成。"
+    IDS_EXIT_TITLE          "退出？"
+    IDS_EXIT_READ           "现在退出将导致映像文件不完整。\n确定要退出吗？"
+    IDS_EXIT_WRITE          "现在退出将导致磁盘数据不完整。\n确定要退出吗？"
+    IDS_EXIT_VERIFY         "现在退出将取消校验。\n确定要退出吗？"
+    IDS_CANCEL_TITLE        "取消？"
+    IDS_CANCEL_CORRUPT      "现在取消将导致目标数据不完整。\n确定要取消吗？"
+    IDS_CANCEL_VERIFY       "取消校验。\n确定要取消吗？"
+    IDS_WRITE_ERROR         "写入错误"
+    IDS_IMAGE_ON_DEVICE     "映像文件不能位于目标设备上。"
+    IDS_CONFIRM_OVERWRITE   "确认覆盖"
+    IDS_WRITE_CONFIRM       "写入物理设备可能会损坏该设备。\n（目标设备：%s ""%s""）\n确定要继续吗？"
+    IDS_FILE_ERROR          "文件错误"
+    IDS_FILE_MISSING        "所选文件不存在。"
+    IDS_NO_PERMISSION       "没有读取所选文件的权限。"
+    IDS_EMPTY_FILE          "所选文件不含任何数据。"
+    IDS_COMPLETE            "完成"
+    IDS_WRITE_OK            "写入成功。"
+    IDS_READ_OK             "读取成功。"
+    IDS_READ_CANCELED       "读取已取消。"
+    IDS_VERIFY_OK           "校验成功。"
+    IDS_FILE_INFO           "文件信息"
+    IDS_SPECIFY_SAVE        "请指定要保存数据的文件。"
+    IDS_SPECIFY_IMAGE       "请指定要使用的映像文件。"
+    IDS_VERIFY_ERROR        "校验错误"
+    IDS_DISK_TOO_SMALL      "磁盘空间不足以容纳指定的映像。"
+    IDS_READ_OVERWRITE      "确定要覆盖指定的文件吗？"
+    IDS_SELECT_IMAGE        "选择磁盘映像"
+    IDS_FILTER_LABEL        "磁盘映像 (*.img *.IMG)"
+    IDS_GENERATING          "正在生成..."
+    IDS_NOT_ENOUGH          "可用空间不足！"
+    IDS_WRITE_SIZE_WARN     "所需空间超过可用空间：\n  需要：%llu 个扇区\n  可用：%llu 个扇区\n  扇区大小：%u\n\n额外空间%s包含数据\n\n仍要继续吗？"
+    IDS_SIZE_MISMATCH       "大小不匹配！"
+    IDS_VERIFY_SIZE_WARN    "映像大于设备：\n  映像：%llu 个扇区\n  设备：%llu 个扇区\n  扇区大小：%u\n\n额外空间%s包含数据\n\n仍要继续吗？"
+    IDS_VERIFY_FAILURE      "校验失败"
+    IDS_VERIFY_FAILED_AT    "校验在扇区 %llu 处失败。"
+    IDS_HASH_ERROR          "校验值错误"
+    IDS_HASH_FAILED         "无法计算校验值（状态 0x%08X）。"
+    IDS_HASH_OPEN_FAILED    "打开映像文件时发生错误。"
+    IDS_DOES                "确实"
+    IDS_DOES_NOT            "并不"
+    IDS_DEVICE_ERROR        "设备错误"
+    IDS_VOLUME_ERROR        "卷错误"
+    IDS_LOCK_ERROR          "锁定错误"
+    IDS_DISMOUNT_ERROR      "卸载错误"
+    IDS_READ_ERROR          "读取错误"
+    IDS_ERR_FILE_HANDLE     "获取文件句柄失败。\n错误 %u：%s"
+    IDS_ERR_DEVICE_HANDLE   "获取设备句柄失败。\n错误 %u：%s"
+    IDS_ERR_VOLUME_HANDLE   "获取卷句柄失败。\n错误 %u：%s"
+    IDS_ERR_VOLUME_INFO     "获取卷信息失败。\n错误 %u：%s"
+    IDS_ERR_LOCK            "锁定卷失败。\n错误 %u：%s"
+    IDS_ERR_DISMOUNT        "卸载卷失败。\n错误 %u：%s"
+    IDS_ERR_READ            "从句柄读取数据失败。\n错误 %u：%s"
+    IDS_ERR_WRITE           "向句柄写入数据失败。\n错误 %u：%s"
+    IDS_ERR_GEOMETRY        "获取设备几何信息失败。\n错误 %u：%s"
+    IDS_ERR_FSIZE           "获取文件大小失败。\n错误 %u：%s"
+    IDS_FREE_SPACE_ERROR    "可用空间错误"
+    IDS_ERR_FREE_SPACE      "无法获取驱动器 %s 的可用空间。\n错误 %u：%s\n将跳过可用空间检查。"
+END
