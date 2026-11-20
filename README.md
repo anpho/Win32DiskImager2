@@ -53,7 +53,7 @@ build.bat                 build script
 screenshot-en.png         English UI
 screenshot-zh.png         Chinese UI
 LICENSE                   GPL-2.0 text
-doc/index.html            single-page landing page for GitHub Pages
+docs/index.html           single-page landing page for GitHub Pages
 ```
 
 ## Build
@@ -109,16 +109,14 @@ resource loader picks the matching language block.
 
 ## Landing page
 
-`doc/index.html` is a self-contained single-page site (inline CSS, one
-screenshot, no external requests). Publish the contents of `doc/` as the
-GitHub Pages root, or point Pages at `doc/` and keep the relative paths intact.
-The page links to `Win32DiskImager.exe` inside `doc/` for a direct download.
+`docs/index.html` is the self-contained single-page site (inline CSS, one
+screenshot, no external requests). It is ready for GitHub Pages: publish the
+repository with **Settings → Pages → Deploy from a branch → main → /docs**.
+The page links to `Win32DiskImager.exe` inside `docs/` for a direct download,
+and `docs/.nojekyll` makes Pages serve the files exactly as committed, without
+Jekyll processing.
 
-> GitHub Pages' branch publishing offers the repository root or `/docs`, not
-> an arbitrary folder. Rename `doc/` to `docs/` or copy its contents to the
-> Pages root before enabling Pages; the relative links stay the same.
-
-![Landing page](doc/preview.png)
+![Landing page](docs/preview.png)
 
 ## Implementation notes
 
