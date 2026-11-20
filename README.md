@@ -41,6 +41,23 @@ Copyright (C) 2009 Justin Davis and the ImageWriter developers.
 * Localized UI and messages (English and Simplified Chinese) selected from the
   Windows UI language, overridable with `--lang`.
 
+## Comparison with the original
+
+| Dimension | Original 1.0.0 (Qt) | This rewrite |
+| --- | --- | --- |
+| Distribution | 12.6 MB installer | **378 KB** single `Win32DiskImager.exe` |
+| Runtime dependencies | Qt 5 Core/GUI/Widgets DLLs, `qwindows.dll` platform plugin, MinGW runtime, `translations/` folder | Windows 10/11 system DLLs only |
+| Application source | 106.9 KB, ≈2,815 lines (C++, `.ui`, `.rc`, `.pro`) | 58.9 KB, 1,602 lines (`main.cpp`, `.rc`, headers, manifest, build script) |
+| UI definition | 418-line `mainwindow.ui` plus Qt-generated code | one shared `DIALOGEX` in a 229-line `.rc` |
+| Custom widget classes | 2 (`DroppableLineEdit`, `ElapsedTimer`) | 0 — stock Win32 controls |
+| Translations | 10 `.ts` files (9 translated locales + English) compiled to `.qm` | 2 languages embedded as `STRINGTABLE` resources (`en`, `zh-CN`) |
+| Build requirements | Qt 5.7 SDK + MinGW 5.3 | MinGW-w64 (`g++`, `windres`) |
+| Native look | Qt Widgets style | Windows Common Controls v6 |
+
+Original figures are measured from the upstream 1.0.0 source archive and
+official installer; rewrite figures are from the current build. Sizes use
+decimal units (1 KB = 1000 bytes).
+
 ## Layout
 
 ```

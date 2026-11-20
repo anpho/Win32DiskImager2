@@ -35,7 +35,7 @@
   a{color:var(--accent);text-decoration:none}
   a:hover{text-decoration:underline}
   a:focus-visible,.btn:focus-visible{outline:3px solid rgba(30,94,255,.35);outline-offset:3px;border-radius:12px}
-  #features,#native,#build,#languages{scroll-margin-top:84px}
+  #features,#native,#build{scroll-margin-top:84px}
   img{max-width:100%}
   .wrap{width:min(1120px, calc(100% - 48px));margin:0 auto}
 
@@ -145,13 +145,6 @@
   }
   .steps b{color:var(--ink)}
 
-  /* languages */
-  .langs{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-  .lang{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px}
-  .lang header{display:flex;justify-content:space-between;align-items:center;color:#7b8598;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;margin-bottom:14px}
-  .lang p{margin:6px 0;font-size:1.02rem}
-  .lang .dim{color:#8a94a8;font-size:.85rem}
-
   /* callout */
   .callout{
     margin-top:34px;display:flex;gap:14px;align-items:flex-start;
@@ -185,7 +178,7 @@
   @media (max-width:720px){
     .links a:not(.github){display:none}
     .stats .wrap{grid-template-columns:1fr 1fr}
-    .grid,.langs{grid-template-columns:1fr}
+    .grid{grid-template-columns:1fr}
     section{padding:62px 0}
     .wrap{width:min(1120px, calc(100% - 32px))}
     h1{letter-spacing:-.035em}
@@ -201,7 +194,6 @@
       <a href="#features">Features</a>
       <a href="#native">Native</a>
       <a href="#build">Build</a>
-      <a href="#languages">Languages</a>
       <a class="github" href="https://sourceforge.net/projects/win32diskimager/" target="_blank" rel="noopener">Original project ↗</a>
     </nav>
   </div>
@@ -336,28 +328,6 @@
           <svg viewBox="0 0 24 24"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>
           <div><strong>Writing a physical device overwrites it.</strong> Double-check the target drive before you press Write.</div>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="languages" class="wrap">
-    <div class="section-head">
-      <p class="eyebrow">Internationalization</p>
-      <h2>One dialog, every language.</h2>
-      <p>Strings live in <code>STRINGTABLE</code> blocks in the resource script. The dialog is shared; captions are loaded with <code>LoadStringW</code> after <code>SetThreadUILanguage</code>.</p>
-    </div>
-    <div class="langs">
-      <div class="lang">
-        <header><span>English</span><span>en-US</span></header>
-        <p>Waiting for a task.</p>
-        <p>Write Successful.</p>
-        <p class="dim">Default on non-Chinese Windows.</p>
-      </div>
-      <div class="lang">
-        <header><span>简体中文</span><span>zh-CN</span></header>
-        <p>等待任务。</p>
-        <p>写入成功。</p>
-        <p class="dim">Chinese Windows UI, or <code>--lang zh-CN</code>.</p>
       </div>
     </div>
   </section>
