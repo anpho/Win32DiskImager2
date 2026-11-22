@@ -35,7 +35,7 @@
   a{color:var(--accent);text-decoration:none}
   a:hover{text-decoration:underline}
   a:focus-visible,.btn:focus-visible{outline:3px solid rgba(30,94,255,.35);outline-offset:3px;border-radius:12px}
-  #features,#native,#build{scroll-margin-top:84px}
+  #features,#compare,#native,#build{scroll-margin-top:84px}
   img{max-width:100%}
   .wrap{width:min(1120px, calc(100% - 48px));margin:0 auto}
 
@@ -113,6 +113,28 @@
   .icon svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
   .card h3{margin:0 0 7px;font-size:1.03rem;letter-spacing:-.01em}
   .card p{margin:0;color:var(--muted);font-size:.92rem;line-height:1.58}
+
+  /* comparison */
+  .compare{
+    background:#fff;border:1px solid var(--line);border-radius:var(--radius);overflow:auto;
+    box-shadow:0 20px 50px -40px rgba(14,23,38,.45);
+  }
+  .compare table{width:100%;min-width:680px;border-collapse:collapse;font-size:.93rem}
+  .compare th,.compare td{text-align:left;vertical-align:top;padding:15px 20px;border-bottom:1px solid #edf0f5}
+  .compare thead th{
+    background:#fbfcfe;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;
+    color:#7b8598;border-bottom:1px solid var(--line);font-weight:700;
+  }
+  .compare thead th:last-child{color:var(--accent)}
+  .compare tbody th{width:23%;font-weight:620;color:#3c4659}
+  .compare tbody td{width:38.5%;color:var(--muted)}
+  .compare tbody td:last-child{color:var(--ink);background:#fcfdff}
+  .compare tbody tr:last-child th,.compare tbody tr:last-child td{border-bottom:0}
+  .compare code{
+    background:#f1f4fa;border:1px solid #e6eaf2;border-radius:4px;padding:1px 4px;
+    font-size:.86em;color:#334155;
+  }
+  .compare-note{margin:14px 2px 0;font-size:.8rem;color:#7b8598}
 
   /* native */
   .native{display:grid;grid-template-columns:.95fr 1.05fr;gap:56px;align-items:center}
@@ -271,6 +293,68 @@
         <p>Every caption and message is a resource string. The UI follows the Windows language or an explicit <code>--lang</code> override.</p>
       </article>
     </div>
+  </section>
+
+  <section id="compare" class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">At a glance</p>
+      <h2>Same tool. A fraction of the footprint.</h2>
+      <p>Measured against the upstream 1.0.0 release: the rewrite keeps the workflow while dropping the Qt runtime and the generated UI code.</p>
+    </div>
+    <div class="compare">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Dimension</th>
+            <th scope="col">Original 1.0.0 (Qt)</th>
+            <th scope="col">This rewrite</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Distribution</th>
+            <td>12.6 MB installer</td>
+            <td><strong>378 KB</strong> single <code>Win32DiskImager.exe</code></td>
+          </tr>
+          <tr>
+            <th scope="row">Runtime dependencies</th>
+            <td>Qt 5 Core/GUI/Widgets DLLs, <code>qwindows.dll</code> platform plugin, MinGW runtime, <code>translations/</code> folder</td>
+            <td>Windows 10/11 system DLLs only</td>
+          </tr>
+          <tr>
+            <th scope="row">Application source</th>
+            <td>106.9 KB, ≈2,815 lines (C++, <code>.ui</code>, <code>.rc</code>, <code>.pro</code>)</td>
+            <td>58.9 KB, 1,602 lines (<code>main.cpp</code>, <code>.rc</code>, headers, manifest, build script)</td>
+          </tr>
+          <tr>
+            <th scope="row">UI definition</th>
+            <td>418-line <code>mainwindow.ui</code> plus Qt-generated code</td>
+            <td>one shared <code>DIALOGEX</code> in a 229-line <code>.rc</code></td>
+          </tr>
+          <tr>
+            <th scope="row">Custom widget classes</th>
+            <td>2 (<code>DroppableLineEdit</code>, <code>ElapsedTimer</code>)</td>
+            <td>0 — stock Win32 controls</td>
+          </tr>
+          <tr>
+            <th scope="row">Translations</th>
+            <td>10 <code>.ts</code> files (9 translated locales + English) compiled to <code>.qm</code></td>
+            <td>2 languages embedded as <code>STRINGTABLE</code> resources (<code>en</code>, <code>zh-CN</code>)</td>
+          </tr>
+          <tr>
+            <th scope="row">Build requirements</th>
+            <td>Qt 5.7 SDK + MinGW 5.3</td>
+            <td>MinGW-w64 (<code>g++</code>, <code>windres</code>)</td>
+          </tr>
+          <tr>
+            <th scope="row">Native look</th>
+            <td>Qt Widgets style</td>
+            <td>Windows Common Controls v6</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="compare-note">Original figures are measured from the upstream 1.0.0 source archive and official installer; rewrite figures are from the current build. Sizes use decimal units (1 KB = 1000 bytes).</p>
   </section>
 
   <section id="native" class="wrap">
